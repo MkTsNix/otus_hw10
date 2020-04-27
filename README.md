@@ -1,6 +1,6 @@
 # HomeWork №9
 
-#-> vagrantup
+#-> vagrant up
 
 ##### Для установки nginx при помощи плейбука
 
