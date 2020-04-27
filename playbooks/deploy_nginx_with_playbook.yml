@@ -1,0 +1,45 @@
+---
+ - name: 'Deploy nginx on port 8080 with playbook'
+   hosts: nginx
+   become: true
+   gather_facts: true
+   vars:
+     nginx_port: 8080
+
+
+   tasks:
+     - name: 'Add epel-release repo'
+       yum:
+         name: epel-release
+         state: present
+
+     - name: 'Install nginx'
+       yum:
+         name: nginx
+         state: present
+       notify:
+         - restart nginx
+       tags:
+         - nginx-package
+         - package
+
+     - name: 'Create NGINX config file from template'
+       template:
+         src: ../templates/nginx.conf.j2
+         dest: /etc/nginx/nginx.conf
+       notify:
+         - reload nginx
+       tags:
+       - nginx-configuration
+
+   handlers:
+     - name: restart nginx
+       systemd:
+         name: nginx
+         state: restarted
+         enabled: yes
+
+     - name: reload nginx
+       systemd:
+         name: nginx
+         state: reloaded
